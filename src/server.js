@@ -26,5 +26,5 @@ app.get("/users", (request, response) => {
 
 const PORT = 3333;
 app.listen(PORT, () =>
-  console.log(`Server is running on Port http://localhost:${PORT} ${fire} `)
+  console.log(`Server running on Port http://localhost:${PORT} ${fire} `)
 );
