@@ -1,30 +1,39 @@
-let emoji = require("node-emoji");
+const emoji = require("node-emoji");
 const fire = emoji.get("fire");
 
+require("express-async-errors");
+
+const migrationsRun = require("./database/sqlite/migrations");
+const AppError = require("./utils/AppError");
 const express = require("express");
 
+const { request } = require("express");
+const routes = require("./routes");
+
+migrationsRun();
+
 const app = express();
+app.use(express.json());
 
-//VALORES SÃO OBRIGATÓRIOS
-app.get("/:id/:user", (request, response) => {
-  const { id, user } = request.params;
+app.use(routes);
 
-  response.send(`
-    ID da mensagem: ${id}
-    Usuário: ${user}
-  `);
-});
+app.use((error, request, response, next) => {
+  if (error instanceof AppError) {
+    return response.status(error.statusCode).json({
+      status: "error",
+      message: error.message,
+    });
+  }
 
-app.get("/users", (request, response) => {
-  const { page, limit } = request.query;
+  console.error(error);
 
-  response.send(`
-    Página: ${page}.
-    Mostrar: ${limit}
-  `);
+  return response.status(500).json({
+    status: "error",
+    message: "Internal server error.",
+  });
 });
 
 const PORT = 3333;
 app.listen(PORT, () =>
-  console.log(`Server is running on Port http://localhost:${PORT} ${fire} `)
+  console.log(`Server is running on Port http://localhost:${PORT} ${fire}`)
 );
