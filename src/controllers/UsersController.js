@@ -54,7 +54,7 @@ class UsersController {
     user.name = name;
     user.email = email;
 
-    if (password && !old_password) {
+    if (password != "" && !old_password) {
       throw new AppError(
         `Você precisa preenche o campo 'Senha Antiga!' para confirma a troca de senha.`
       );
